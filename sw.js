@@ -1,52 +1,62 @@
-const CACHE_NAME = 'prognose-rechner-v1';
-// Файлы, которые должны быть закэшированы
+// Версия кэша — увеличивай при каждом деплое
+const CACHE_NAME = 'prognose-rechner-v1.1';
+
+// Список файлов для кэширования
 const urlsToCache = [
   '/',
-  '/index.html',
-  '/script.js',
-  '/styles.css', // Если у вас есть CSS
-  '/manifest.json',
-  '/icons/icon-192x192.png'
+  '/index.html?v=1.1',
+  '/script.js?v=1.1',
+  '/styles.css?v=1.1',
+  '/manifest.json?v=1.1',
+  '/icons/icon-192x192.png?v=1.1',
+  '/icons/favicon-32x32.png?v=1.1'
 ];
 
-// Установка Service Worker и кэширование статических файлов
+// Установка SW и кэширование файлов
 self.addEventListener('install', event => {
+  self.skipWaiting(); // Активировать сразу без ожидания
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
+      .then(cache => cache.addAll(urlsToCache))
   );
 });
 
-// Перехват запросов для обслуживания из кэша
+// Активация — удаление старых кэшей
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys.filter(key => key !== CACHE_NAME)
+            .map(key => caches.delete(key))
+      )
+    )
+  );
+  self.clients.claim(); // Берём контроль над всеми клиентами сразу
+});
+
+// Перехват fetch-запросов — Stale-While-Revalidate
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Если файл найден в кэше, отдаем его
-        if (response) {
-          return response;
-        }
-        // Иначе - делаем запрос в сеть
-        return fetch(event.request);
-      })
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.match(event.request).then(cachedResponse => {
+        const fetchPromise = fetch(event.request)
+          .then(networkResponse => {
+            // Обновляем кэш новыми данными
+            cache.put(event.request, networkResponse.clone());
+            return networkResponse;
+          })
+          .catch(() => cachedResponse); // Если нет сети — отдаем кэш
+
+        // Возвращаем кэш сразу, а сеть обновляет его в фоне
+        return cachedResponse || fetchPromise;
+      });
+    })
   );
 });
 
-// Активация: удаление старых кэшей
-self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
-  );
+// Опционально: получение сообщений от клиента для принудительного обновления
+self.addEventListener('message', event => {
+  if (event.data === 'skipWaiting') {
+    self.skipWaiting();
+  }
 });
