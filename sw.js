@@ -1,6 +1,6 @@
 // Генерируем версию на основе текущей даты и времени
 const CACHE_VERSION = new Date().toISOString().replace(/[-:.]/g, "");
-const CACHE_NAME = `prognose-rechner-v${CACHE_VERSION}`;
+const CACHE_NAME = `prognose_rechner-v${CACHE_VERSION}`;
 
 const urlsToCache = [
   `/index.html?v=${CACHE_VERSION}`,
