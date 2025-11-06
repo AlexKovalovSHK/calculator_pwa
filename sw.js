@@ -1,23 +1,20 @@
-// Версия кэша — увеличивай при каждом деплое
-const CACHE_NAME = 'prognose-rechner-v1.1';
+// Генерируем версию на основе текущей даты и времени
+const CACHE_VERSION = new Date().toISOString().replace(/[-:.]/g, "");
+const CACHE_NAME = `prognose-rechner-v${CACHE_VERSION}`;
 
-// Список файлов для кэширования
 const urlsToCache = [
-  '/',
-  '/index.html?v=1.1',
-  '/script.js?v=1.1',
-  '/styles.css?v=1.1',
-  '/manifest.json?v=1.1',
-  '/icons/icon-192x192.png?v=1.1',
-  '/icons/favicon-32x32.png?v=1.1'
+  `/index.html?v=${CACHE_VERSION}`,
+  `/script.js?v=${CACHE_VERSION}`,
+  `/styles.css?v=${CACHE_VERSION}`,
+  `/manifest.json?v=${CACHE_VERSION}`,
+  `/icons/icon-192x192.png?v=${CACHE_VERSION}`
 ];
 
-// Установка SW и кэширование файлов
+// Установка SW и кэширование
 self.addEventListener('install', event => {
-  self.skipWaiting(); // Активировать сразу без ожидания
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
+    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
   );
 });
 
@@ -26,37 +23,24 @@ self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(
-        keys.filter(key => key !== CACHE_NAME)
-            .map(key => caches.delete(key))
+        keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
       )
     )
   );
-  self.clients.claim(); // Берём контроль над всеми клиентами сразу
+  self.clients.claim();
 });
 
-// Перехват fetch-запросов — Stale-While-Revalidate
+// Fetch с "Stale While Revalidate"
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.open(CACHE_NAME).then(cache => {
       return cache.match(event.request).then(cachedResponse => {
-        const fetchPromise = fetch(event.request)
-          .then(networkResponse => {
-            // Обновляем кэш новыми данными
-            cache.put(event.request, networkResponse.clone());
-            return networkResponse;
-          })
-          .catch(() => cachedResponse); // Если нет сети — отдаем кэш
-
-        // Возвращаем кэш сразу, а сеть обновляет его в фоне
+        const fetchPromise = fetch(event.request).then(networkResponse => {
+          cache.put(event.request, networkResponse.clone());
+          return networkResponse;
+        }).catch(() => cachedResponse);
         return cachedResponse || fetchPromise;
       });
     })
   );
-});
-
-// Опционально: получение сообщений от клиента для принудительного обновления
-self.addEventListener('message', event => {
-  if (event.data === 'skipWaiting') {
-    self.skipWaiting();
-  }
 });
