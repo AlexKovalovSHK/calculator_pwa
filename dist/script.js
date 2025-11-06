@@ -1,0 +1,858 @@
+  let allSum = 30000;
+      let totalAmountOfSupport = 30000 * 0.3;
+      let generalForecast = 30000; //общий прогноз
+      let calculationForOne = 0;
+      let qyontityUnits = 1;
+      let homeOwners = 0;
+      let heatingAge = "Jünger als 20 Jahre";
+      let typeHeting = "";
+      let naturalRefrigerants = false;
+      let earnings = "Keine Angabe";
+      let bonus1 = 0.3;
+      let bonus2 = 0;
+      let bonus3 = 0;
+      let bonus4 = 0;
+
+      const calculator = (
+        bonus1,
+        bonus2,
+        bonus3,
+        bonus4,
+        homeUnits,
+        owners,
+        finance,
+        hetingType,
+        heatingAge,
+        naturalRefrigerants
+      ) => {
+        owners = Number(owners);
+        homeUnits = Number(homeUnits);
+        //console.log(bonus1, bonus2, bonus3, bonus4, homeUnits, owners, finance, hetingType, heatingAge, naturalRefrigerants);
+
+        let simpleUnits = homeUnits - owners; //
+        console.log(simpleUnits);
+
+        let sumForOneOwner = 0; //
+        let sumForAllOwners = 0; //
+        let sumForAllUnits = 0; //
+        let selfSum = generalForecast; //
+        let sumForSimpleUnits = 0;
+        let suportUnits = 0;
+        let suportOwners = 0;
+
+        if (homeUnits == 1) {
+          selfSum = 30000;
+          calculationForOne = selfSum / homeUnits;
+        }
+        if (homeUnits > 1 && homeUnits <= 6) {
+          selfSum = 30000 + (homeUnits - 1) * 15000;
+          calculationForOne = selfSum / homeUnits;
+        }
+        if (homeUnits > 6) {
+          selfSum = 30000 + 5 * 15000 + (homeUnits - 6) * 8000;
+          calculationForOne = selfSum / homeUnits;
+        }
+
+        if (bonus4 != 0.05) {
+          suportUnits = calculationForOne * 0.3 * simpleUnits;
+        } else {
+          suportUnits = calculationForOne * 0.35 * simpleUnits;
+        }
+
+        if (owners) {
+          if (owners > homeUnits) {
+            alert("Hey! You can't do that!!!");
+            window.location.href = window.location.href;
+          } else {
+            if (bonus1 + bonus2 + bonus3 + bonus4 > 0.7) {
+              suportOwners = owners * calculationForOne * 0.7;
+            } else {
+              if (
+                !bonus3 &&
+                !(
+                  (heatingAge === "Älter als 20 Jahre" &&
+                    hetingType === "Gaskessel") ||
+                  hetingType === "Ölkessel" ||
+                  hetingType === "Gasetagenheizung" ||
+                  hetingType === "Nachtspeicherheizung"
+                )
+              ) {
+                if (bonus4 != 0.05) {
+                  suportOwners = calculationForOne * 0.3 * owners;
+                } else {
+                  suportOwners = calculationForOne * 0.35 * owners;
+                }
+              }
+              if (bonus3 === 0.3) {
+                suportOwners = calculationForOne * 0.6 * owners;
+                checkboxEinkomensbonus.style.display = "inline";
+              }
+              if (
+                (heatingAge === "Älter als 20 Jahre" &&
+                  hetingType === "Gaskessel") ||
+                hetingType === "Ölkessel" ||
+                hetingType === "Gasetagenheizung" ||
+                hetingType === "Nachtspeicherheizung"
+              ) {
+                checkboxGeschwindigkeitsbonus.style.display = "inline";
+                suportOwners = calculationForOne * 0.55 * owners;
+              } else {
+                checkboxGeschwindigkeitsbonus.style.display = "none";
+              }
+            }
+          }
+        }
+        generalForecast = selfSum;
+        result.innerHTML = selfSum + " Euro";
+        totalAmountOfSupport = suportOwners + suportUnits;
+        forecast.innerText = `Prognose Gesamt-Fördersumme - ${totalAmountOfSupport} Euro`;
+      };
+
+      var buttonBlock = document.createElement("div");
+
+      buttonBlock.style.margin = "0 auto";
+      buttonBlock.style.maxWidth = "317px";
+      buttonBlock.style.padding = "3% 5%";
+      buttonBlock.style.border = "solid 1px #3279B7";
+      buttonBlock.style.borderRadius = "10px";
+      buttonBlock.style.backgroundColor = "#F8F9FA";
+
+      var newDivTop = document.createElement("div");
+      buttonBlock.appendChild(newDivTop);
+
+      newDivTop.style.display = "flex";
+      newDivTop.style.flexDirection = "row";
+      newDivTop.style.justifyContent = "space-between";
+      newDivTop.style.flexWrap = "wrap";
+      newDivTop.style.margin = "30px 0";
+
+      var button1 = document.createElement("button");
+      button1.innerHTML = "Gebäudedaten";
+      button1.style.backgroundColor = "gray";
+      button1.style.color = "#ffffff";
+      button1.style.border = "none";
+      button1.style.borderRadius = "3px";
+      button1.style.padding = "10px";
+      newDivTop.appendChild(button1);
+
+      button1.addEventListener("click", function () {
+        if (gebaudedaten.style.display === "none") {
+          gebaudedaten.style.display = "flex";
+          haustechnik.style.display = "none";
+          results.style.display = "none";
+          //txtHello.style.display = 'none'
+
+          button1.style.backgroundColor = "gray";
+          button2.style.backgroundColor = "#3279B7";
+          button3.style.backgroundColor = "#3279B7";
+        }
+      });
+
+      var button2 = document.createElement("button");
+      button2.innerHTML = "Haustechnik";
+      button2.style.backgroundColor = "#3279B7";
+      button2.style.color = "#ffffff";
+      button2.style.border = "none";
+      button2.style.borderRadius = "3px";
+      button2.style.padding = "10px";
+      newDivTop.appendChild(button2);
+
+      // Hiding the block
+      button2.addEventListener("click", function () {
+        if (haustechnik.style.display === "none") {
+          haustechnik.style.display = "flex";
+          haustechnik.style.display = "flex";
+          gebaudedaten.style.display = "none";
+          gebaudedaten.style.display = "none";
+          results.style.display = "none";
+
+          button1.style.backgroundColor = "#3279B7";
+          button2.style.backgroundColor = "gray";
+          button3.style.backgroundColor = "#3279B7";
+        }
+      });
+
+      var button3 = document.createElement("button");
+      button3.innerHTML = "Förderung";
+      button3.style.backgroundColor = "#3279B7";
+      button3.style.color = "#ffffff";
+      button3.style.border = "none";
+      button3.style.borderRadius = "3px";
+      button3.style.padding = "10px";
+      newDivTop.appendChild(button3);
+
+      // Hiding the block
+      button3.addEventListener("click", function () {
+        if (results.style.display === "none") {
+          results.style.display = "flex";
+          gebaudedaten.style.display = "none";
+          haustechnik.style.display = "none";
+
+          button1.style.backgroundColor = "#3279B7";
+          button2.style.backgroundColor = "#3279B7";
+          button3.style.backgroundColor = "gray";
+        }
+      });
+
+      var newDivUp = document.createElement("div");
+      buttonBlock.appendChild(newDivUp);
+      newDivUp.style.border = "1px solid #3279B7";
+      newDivUp.style.padding = "15px";
+      newDivUp.style.borderRadius = "5px";
+      newDivUp.style.height = "auto";
+      newDivUp.style.backgroundColor = "#ffffff";
+      newDivUp.style.display = "flex";
+      newDivUp.style.flexDirection = "column";
+
+      document.body.appendChild(buttonBlock);
+
+      /*const txtHello = document.createElement('span');
+        txtHello.id = 'txtHello'
+        txtHello.innerHTML = 'SHK Info!!!'
+        txtHello.style.fontFamily = 'Arial';
+        txtHello.style.fontSize = '36px';
+        txtHello.style.display = 'inline'
+        txtHello.style.margin = '0 auto'
+        newDivUp.appendChild(txtHello);*/
+
+      var gebaudedaten = document.createElement("div");
+      gebaudedaten.style.borderRadius = "5px";
+      gebaudedaten.style.display = "flex";
+      gebaudedaten.style.flexDirection = "column";
+      gebaudedaten.style.marginBottom = "15px";
+      gebaudedaten.style.marginBottom = "35px";
+      newDivUp.appendChild(gebaudedaten);
+      gebaudedaten.style.display = "flex";
+
+      //==============================
+
+      const dropdown1 = document.createElement("dropdown");
+      dropdown1.style.width = "100%";
+      gebaudedaten.appendChild(dropdown1);
+      const select1 = document.createElement("select");
+      const label1 = document.createElement("label");
+      label1.innerHTML = "Gebäudetyp";
+      label1.style.fontFamily = "Arial";
+      select1.style.width = "100%";
+      select1.style.height = "35px";
+      select1.style.padding = "10px";
+      select1.style.borderRadius = "3px";
+      select1.style.margin = "10px auto";
+      select1.style.border = "1px solid #D9D9D9";
+      select1.id = "mySelect1";
+      const options1 = [];
+      for (let i = 1; i <= 3; i++) {
+        const option1 = document.createElement("option");
+        option1.text = `Sanierung Wohngebäude ${i}`;
+        option1.value = `Sanierung Wohngebäude`;
+        options1.push(option1);
+      }
+      options1.forEach((option1) => select1.appendChild(option1));
+      dropdown1.appendChild(label1);
+      dropdown1.appendChild(select1);
+      // Add event listener to output the result to the console  // Wohneinheiten
+      select1.addEventListener("change", function () {
+        calculator(1);
+      });
+
+      const dropdown2 = document.createElement("dropdown");
+      gebaudedaten.appendChild(dropdown2);
+      const select2 = document.createElement("select");
+      const label2 = document.createElement("label");
+      label2.innerHTML = "Wohneinheiten"; //Жилые единицы  ResidentialUnits
+      label2.style.fontFamily = "Arial";
+      select2.style.width = "100%";
+      select2.style.height = "35px";
+      select2.style.padding = "10px";
+      select2.style.borderRadius = "3px";
+      select2.style.margin = "10px auto";
+      select2.style.border = "1px solid #D9D9D9";
+      select2.id = "mySelect2";
+      const options2 = [];
+      for (let i = 1; i <= 14; i++) {
+        const option2 = document.createElement("option");
+        option2.text = `${i} Wohneinheiten`;
+        option2.value = i;
+        options2.push(option2);
+      }
+      options2.forEach((option2) => select2.appendChild(option2));
+      dropdown2.appendChild(label2);
+      dropdown2.appendChild(select2);
+
+      // Add event listener to output the result to the console  // Wohneinheiten
+      select2.addEventListener("change", function () {
+        qyontityUnits = this.value;
+        calculator(
+          bonus1,
+          bonus2,
+          bonus3,
+          bonus4,
+          qyontityUnits,
+          homeOwners,
+          earnings,
+          typeHeting,
+          heatingAge,
+          naturalRefrigerants
+        );
+        //calculator = (residents, owners, finance, hetingType, heatingAge, naturalRefrigerants)
+        units.innerText = `Anzahl Wohneinheiten - ${this.value}`;
+      });
+
+      const dropdown3 = document.createElement("dropdown");
+      gebaudedaten.appendChild(dropdown3);
+      const select3 = document.createElement("select");
+      const label3 = document.createElement("label");
+      label3.innerHTML = "Davon selbst genutzt";
+      label3.style.fontFamily = "Arial";
+      select3.style.width = "100%";
+      select3.style.height = "35px";
+      select3.style.padding = "10px";
+      select3.style.borderRadius = "3px";
+      select3.style.margin = "10px auto";
+      select3.style.border = "1px solid #D9D9D9";
+      select3.id = "mySelect3";
+      const options3 = [];
+      for (let i = 0; i <= 6; i++) {
+        const option3 = document.createElement("option");
+        option3.text = `${i} Wohneinheiten`;
+        option3.value = i;
+        options3.push(option3);
+      }
+      options3.forEach((option3) => select3.appendChild(option3));
+      dropdown3.appendChild(label3);
+      dropdown3.appendChild(select3);
+
+      // Add event listener to output the result to the console  // Wohneinheiten
+      select3.addEventListener("change", function () {
+        homeOwners = this.value;
+        if (homeOwners == 0) {
+          dropdown4.style.display = "none";
+          dropdown5.style.display = "none";
+          dropdown6.style.display = "none";
+        } else {
+          dropdown4.style.display = "inline";
+          dropdown5.style.display = "inline";
+          dropdown6.style.display = "inline";
+        }
+        calculator(
+          bonus1,
+          bonus2,
+          bonus3,
+          bonus4,
+          qyontityUnits,
+          homeOwners,
+          earnings,
+          typeHeting,
+          heatingAge,
+          naturalRefrigerants
+        );
+
+        units.innerText = `Anzahl Wohneinheiten - ${qyontityUnits}`;
+      });
+
+      const dropdown4 = document.createElement("dropdown");
+      gebaudedaten.appendChild(dropdown4);
+      if (homeOwners === 0) {
+        dropdown4.style.display = "none";
+      }
+      // Create the dropdown list
+      const select4 = document.createElement("select");
+      const label4 = document.createElement("label");
+      label4.innerHTML = "Nutzung Wohngebäude";
+      label4.style.fontFamily = "Arial";
+      select4.style.width = "100%";
+      select4.style.height = "35px";
+      select4.style.padding = "10px";
+      select4.style.borderRadius = "3px";
+      select4.style.margin = "10px auto";
+      select4.style.border = "1px solid #D9D9D9";
+      select4.id = "mySelect4";
+      // Create the options
+      const optionsSource4 = [
+        "Keine Angabe",
+        "Jahreseinkommen Haushalt unter 40.000 €",
+        "Jahreseinkommen Haushalt über 40.000 €",
+      ];
+      const options4 = [];
+      for (let i = 0; i <= optionsSource4.length - 1; i++) {
+        const option4 = document.createElement("option");
+        option4.text = `${optionsSource4[i]}`;
+        option4.value = `${optionsSource4[i]}`;
+        options4.push(option4);
+      }
+      options4.forEach((option4) => select4.appendChild(option4));
+
+      dropdown4.appendChild(label4);
+      dropdown4.appendChild(select4);
+
+      // Add event listener to output the result to the console  // Wohneinheiten
+      select4.addEventListener("change", function () {
+        earnings = this.value;
+        if (earnings === "Jahreseinkommen Haushalt unter 40.000 €") {
+          bonus3 = 0.3;
+          calculator(bonus1, 0, bonus3, 0, qyontityUnits, homeOwners, earnings);
+          checkboxEinkomensbonus.style.display = "inline";
+        } else {
+          bonus3 = 0;
+          checkboxEinkomensbonus.style.display = "none";
+          calculator(
+            bonus1,
+            bonus2,
+            bonus3,
+            bonus4,
+            qyontityUnits,
+            homeOwners,
+            earnings,
+            typeHeting,
+            heatingAge,
+            naturalRefrigerants
+          );
+        }
+      });
+
+      const dropdown5 = document.createElement("dropdown");
+      dropdown5.style.display = "none";
+      gebaudedaten.appendChild(dropdown5);
+      const select5 = document.createElement("select");
+      const label5 = document.createElement("label");
+      label5.innerHTML = "Bestehende Heizung - Typ";
+      label5.style.fontFamily = "Arial";
+      select5.style.width = "100%";
+      select5.style.height = "35px";
+      select5.style.padding = "10px";
+      select5.style.borderRadius = "3px";
+      select5.style.margin = "10px auto";
+      select5.style.border = "1px solid #D9D9D9";
+      select5.id = "mySelect5";
+      const options5 = [];
+      const optionsSource5 = [
+        "Elektro-Zentralheizung",
+        "Gaskessel",
+        "Gasetagenheizung",
+        "Ölkessel",
+        "Wärmepumpe",
+        "Nachtspeicherheizung",
+        "Kohleheizung",
+        "Sonstige Wärmeerzeuger",
+      ];
+      for (let i = 0; i <= optionsSource5.length - 1; i++) {
+        const option5 = document.createElement("option");
+        option5.text = `${optionsSource5[i]}`;
+        option5.value = `${optionsSource5[i]}`;
+        options5.push(option5);
+      }
+      options5.forEach((option5) => select5.appendChild(option5));
+      dropdown5.appendChild(label5);
+      dropdown5.appendChild(select5);
+
+      // Add event listener to output the result to the console  // Wohneinheiten
+      select5.addEventListener("change", function () {
+        typeHeting = this.value;
+        if (typeHeting === "Gaskessel") {
+          select6.style.display = "inline";
+        } else {
+          select6.style.display = "none";
+        }
+        //const calculator = (bonus1, bonus2, bonus3, bonus4, homeUnits, owners, finance, hetingType, heatingAge, naturalRefrigerants)
+        calculator(
+          bonus1,
+          bonus2,
+          bonus3,
+          bonus4,
+          qyontityUnits,
+          homeOwners,
+          earnings,
+          typeHeting,
+          heatingAge,
+          naturalRefrigerants
+        );
+      });
+
+      const dropdown6 = document.createElement("dropdown");
+      dropdown6.style.display = "none";
+      gebaudedaten.appendChild(dropdown6);
+      const select6 = document.createElement("select");
+      const label6 = document.createElement("label");
+      label6.innerHTML = "Bestehende Heizung - Alter";
+      label6.style.fontFamily = "Arial";
+      select6.style.width = "100%";
+      select6.style.height = "35px";
+      select6.style.padding = "10px";
+      select6.style.borderRadius = "3px";
+      select6.style.margin = "10px auto";
+      select6.style.border = "1px solid #D9D9D9";
+      select6.style.display = "none";
+      select6.id = "mySelect1";
+      const options6 = [];
+      const optionsSource6 = ["Jünger als 20 Jahre", "Älter als 20 Jahre"];
+      for (let i = 0; i <= optionsSource6.length - 1; i++) {
+        const option6 = document.createElement("option");
+        option6.text = `${optionsSource6[i]}`;
+        option6.value = optionsSource6[i];
+        options6.push(option6);
+      }
+      options6.forEach((option6) => select6.appendChild(option6));
+      dropdown6.appendChild(label6);
+      dropdown6.appendChild(select6);
+
+      select6.addEventListener("change", function () {
+        heatingAge = this.value;
+        calculator(
+          bonus1,
+          bonus2,
+          bonus3,
+          0,
+          qyontityUnits,
+          homeOwners,
+          earnings,
+          typeHeting,
+          heatingAge,
+          naturalRefrigerants
+        );
+      });
+
+      var buttonNext1 = document.createElement("button");
+      buttonNext1.innerHTML = "Weiter";
+      buttonNext1.style.backgroundColor = "#3279B7";
+      buttonNext1.style.color = "#ffffff";
+      buttonNext1.style.border = "none";
+      buttonNext1.style.marginTop = "10px";
+      buttonNext1.style.borderRadius = "3px";
+      buttonNext1.style.padding = "10px";
+      gebaudedaten.appendChild(buttonNext1);
+
+      // Open next div
+      buttonNext1.addEventListener("click", function () {
+        button1.style.backgroundColor = "#3279B7"; //red
+        button2.style.backgroundColor = "gray"; //red
+        button3.style.backgroundColor = "#3279B7"; //red
+        if (haustechnik.style.display === "none") {
+          haustechnik.style.display = "flex";
+          gebaudedaten.style.display = "none";
+
+          button1.style.backgroundColor = "#3279B7"; //red
+          button2.style.backgroundColor = "gray"; //red
+          button3.style.backgroundColor = "#3279B7"; //red
+        } else {
+          haustechnik.style.display = "none";
+        }
+      });
+
+      //==============================
+
+      var haustechnik = document.createElement("div");
+      haustechnik.style.padding = "5px";
+      haustechnik.style.display = "flex";
+      haustechnik.style.flexDirection = "column";
+      newDivUp.appendChild(haustechnik);
+      haustechnik.style.display = "none";
+
+      const dropdown1haustechnik = document.createElement("dropdown");
+      haustechnik.appendChild(dropdown1haustechnik);
+      const select1haustechnik = document.createElement("select");
+      const label1haustechnik = document.createElement("label");
+      label1haustechnik.innerHTML = "Neue Heizungsanlage";
+      label1haustechnik.style.fontFamily = "Arial";
+      select1haustechnik.style.width = "100%";
+      select1haustechnik.style.height = "35px";
+      select1haustechnik.style.padding = "10px";
+      select1haustechnik.style.borderRadius = "3px";
+      select1haustechnik.style.margin = "10px auto";
+      select1haustechnik.style.border = "1px solid #D9D9D9";
+      select1haustechnik.id = "mySelect1";
+      const options1haustechnik = [];
+      const option1haustechnikSource = [
+        "Wärmepumpe",
+        "Wärmepumpe und Solaranlage",
+        "Wärmepumpe und Gaskessel",
+        "Wärmepumpe und Ölkessel",
+        "Wärmepumpe und Fernwärme",
+      ];
+      for (let i = 0; i <= option1haustechnikSource.length - 1; i++) {
+        const option1haustechnik = document.createElement("option");
+        option1haustechnik.text = option1haustechnikSource[i];
+        option1haustechnik.value = option1haustechnikSource[i];
+        options1haustechnik.push(option1haustechnik);
+      }
+      options1haustechnik.forEach((option1haustechnik) =>
+        select1haustechnik.appendChild(option1haustechnik)
+      );
+      dropdown1haustechnik.appendChild(label1haustechnik);
+      dropdown1haustechnik.appendChild(select1haustechnik);
+
+      const dropdown2haustechnik = document.createElement("dropdown");
+      haustechnik.appendChild(dropdown2haustechnik);
+      const select2haustechnik = document.createElement("select");
+      const label2haustechnik = document.createElement("label");
+      label2haustechnik.innerHTML = "Wärmequelle";
+      label2haustechnik.style.fontFamily = "Arial";
+      select2haustechnik.style.width = "100%";
+      select2haustechnik.style.height = "35px";
+      select2haustechnik.style.padding = "10px";
+      select2haustechnik.style.borderRadius = "3px";
+      select2haustechnik.style.margin = "10px auto";
+      select2haustechnik.style.border = "1px solid #D9D9D9";
+      select2haustechnik.id = "mySelect1";
+      const options2haustechnik = [];
+      const option2haustechnikSource = [
+        "Luft-Wärmepumpe",
+        "Erdreich-Wärmepumpe mit Sonde",
+        "Erdreich-Wärmepumpe mit Kollektor",
+        "Grundwasser-Wärmepumpe",
+      ];
+      for (let i = 0; i <= option2haustechnikSource.length - 1; i++) {
+        const option2haustechnik = document.createElement("option");
+        option2haustechnik.text = option2haustechnikSource[i];
+        option2haustechnik.value = option2haustechnikSource[i];
+        options2haustechnik.push(option2haustechnik);
+      }
+      options2haustechnik.forEach((option2haustechnik) =>
+        select2haustechnik.appendChild(option2haustechnik)
+      );
+      dropdown2haustechnik.appendChild(label2haustechnik);
+      dropdown2haustechnik.appendChild(select2haustechnik);
+
+      // Create a switch
+      var switcher = document.createElement("div");
+      switcher.style.display = "flex";
+      switcher.style.justifyContent = "space-between";
+      switcher.style.margin = "10px 0";
+
+      // Creating switch elements
+      var switcherLabel = document.createElement("span");
+      switcherLabel.textContent = "Natürliche Kältemittel kommen zum Einsatz";
+      switcherLabel.style.fontFamily = "Arial";
+
+      var switcherInput = document.createElement("input");
+      switcherInput.type = "checkbox";
+      switcherInput.id = "switcher";
+      switcherInput.style.display = "none";
+
+      var switcherSlider = document.createElement("label");
+      switcherSlider.htmlFor = "switcher";
+      switcherSlider.style.position = "relative";
+      switcherSlider.style.display = "inline-block";
+      switcherSlider.style.width = "60px";
+      switcherSlider.style.height = "20px";
+      switcherSlider.style.background = "#ccc";
+      switcherSlider.style.borderRadius = "34px";
+      switcherSlider.style.cursor = "pointer";
+
+      var switcherSliderSpan = document.createElement("span");
+      switcherSliderSpan.style.position = "absolute";
+      switcherSliderSpan.style.top = "0";
+      switcherSliderSpan.style.left = "0";
+      switcherSliderSpan.style.right = "0";
+      switcherSliderSpan.style.bottom = "0";
+      switcherSliderSpan.style.borderRadius = "50%";
+      switcherSliderSpan.style.width = "16px";
+      switcherSliderSpan.style.height = "16px";
+      switcherSliderSpan.style.margin = "2px";
+      switcherSliderSpan.style.background = "#fff";
+      switcherSliderSpan.style.transition = "0.4s";
+
+      switcherSlider.appendChild(switcherSliderSpan);
+      switcher.appendChild(switcherLabel);
+      switcher.appendChild(switcherInput);
+      switcher.appendChild(switcherSlider);
+
+      // Add a switch to newDivUp
+      haustechnik.appendChild(switcher); //checkboxEffizienzbonus
+
+      // Adding an event to the switch
+      switcherInput.addEventListener("change", function () {
+        if (this.checked) {
+          naturalRefrigerants = true;
+          switcherSliderSpan.style.transform = "translateX(26px)";
+          switcherSlider.style.background = "#2196F3";
+          checkboxEffizienzbonus.style.display = "inline";
+          bonus4 = 0.05;
+          //forecast.innerText = `Prognose Gesamt-Fördersumme - ${totalAmountOfSupport * 0.05 + totalAmountOfSupport} Euro`
+          calculator(
+            bonus1,
+            bonus2,
+            bonus3,
+            bonus4,
+            qyontityUnits,
+            homeOwners,
+            earnings,
+            typeHeting,
+            heatingAge,
+            naturalRefrigerants
+          );
+        } else {
+          naturalRefrigerants = false;
+          switcherSliderSpan.style.transform = "translateX(0)";
+          switcherSlider.style.background = "#ccc";
+          checkboxEffizienzbonus.style.display = "none";
+          bonus4 = 0;
+          //forecast.innerText = `Prognose Gesamt-Fördersumme - ${totalAmountOfSupport} Euro`
+          calculator(
+            bonus1,
+            bonus2,
+            bonus3,
+            bonus4,
+            qyontityUnits,
+            homeOwners,
+            earnings,
+            typeHeting,
+            heatingAge,
+            naturalRefrigerants
+          );
+        }
+      });
+
+      const labelSlider = document.createElement("label");
+      labelSlider.innerHTML = "Kosten Heizungstechnik";
+      labelSlider.style.fontFamily = "Arial";
+      labelSlider.style.marginTop = "15px";
+
+      // Creating a slider
+      var slider = document.createElement("input");
+      slider.type = "range";
+      slider.min = 0;
+      slider.max = this.generalForecast;
+      //slider.value = 50;
+      slider.value = generalForecast;
+      slider.style.width = "100%";
+      slider.style.height = "20px";
+      slider.style.margin = "10px 0";
+
+      // Create an element to display the result
+      var result = document.createElement("span");
+      result.innerHTML = generalForecast + " Euro";
+      result.style.fontFamily = "Arial";
+      result.style.fontSize = "18px";
+      result.style.margin = "5px 0";
+
+      // Добавляем ползунок и результат в newDivUp ///!!!!!!!!!!!!!!
+      haustechnik.appendChild(labelSlider);
+      haustechnik.appendChild(slider);
+      haustechnik.appendChild(result);
+
+      // Добавляем событие на ползунок
+      slider.addEventListener("input", function () {
+        result.innerHTML = (generalForecast * this.value) / 100 + " Euro";
+        forecast.innerHTML = `Prognose Gesamt-Fördersumme - ${
+          (totalAmountOfSupport * this.value) / 100
+        } Euro`;
+      });
+
+      var buttonNext2 = document.createElement("button");
+      buttonNext2.innerHTML = "Weiter";
+      buttonNext2.style.backgroundColor = "#3279B7";
+      buttonNext2.style.color = "#ffffff";
+      buttonNext2.style.border = "none";
+      buttonNext2.style.marginTop = "10px";
+      buttonNext2.style.borderRadius = "3px";
+      buttonNext2.style.padding = "10px";
+      haustechnik.appendChild(buttonNext2);
+
+      // Open next div
+      buttonNext2.addEventListener("click", function () {
+        button1.style.backgroundColor = "#3279B7"; //red
+        button2.style.backgroundColor = "#3279B7"; //red
+        button3.style.backgroundColor = "gray"; //red
+        if (results.style.display === "none") {
+          results.style.display = "flex";
+          haustechnik.style.display = "none";
+        } else {
+          results.style.display = "none";
+        }
+      });
+
+      //==============================
+
+      var results = document.createElement("div");
+      results.style.marginTop = "30px";
+      results.style.padding = "5px";
+      results.style.display = "none";
+      results.style.flexDirection = "column";
+      newDivUp.appendChild(results);
+
+      var forecast = document.createElement("div");
+      forecast.innerText = `Prognose Gesamt-Fördersumme - ${totalAmountOfSupport} Euro`;
+      forecast.style.fontFamily = "Arial";
+      forecast.style.border = "1px solid #D9D9D9";
+      forecast.style.borderRadius = "5px";
+      forecast.style.padding = "15px 8px";
+      forecast.style.display = "flex";
+      forecast.style.flexDirection = "column";
+      results.appendChild(forecast);
+
+      var units = document.createElement("div");
+      units.innerText = `Anzahl Wohneinheiten - ${qyontityUnits}`;
+      units.style.fontFamily = "Arial";
+      units.style.border = "1px solid #D9D9D9";
+      units.style.borderRadius = "5px";
+      units.style.marginTop = "15px";
+      units.style.padding = "15px 8px";
+      units.style.display = "flex";
+      units.style.flexDirection = "column";
+      results.appendChild(units);
+
+      var percents = document.createElement("div");
+      percents.style.display = "flex";
+      percents.style.flexDirection = "column";
+      results.appendChild(percents);
+
+      var percentsIn1 = document.createElement("div");
+      percents.appendChild(percentsIn1);
+
+      const basisforderung = document.createElement("div");
+      basisforderung.innerHTML = "Basisförderung - 30%";
+      basisforderung.style.fontFamily = "Arial";
+      basisforderung.style.marginTop = "10px";
+      basisforderung.style.display = "flex";
+      basisforderung.style.flexDirection = "row";
+      percentsIn1.appendChild(basisforderung);
+
+      const checkboxBasisforderung = document.createElement("div");
+      checkboxBasisforderung.id = "checkboxBasisforderung";
+      checkboxBasisforderung.innerHTML = "AKTIV!";
+      checkboxBasisforderung.style.color = "green";
+      checkboxBasisforderung.style.marginLeft = "5%";
+      checkboxBasisforderung.style.display = "inline";
+      basisforderung.appendChild(checkboxBasisforderung);
+
+      const geschwindigkeitsbonus = document.createElement("div");
+      geschwindigkeitsbonus.innerText = "Geschwindigkeitsbonus - 20%";
+      geschwindigkeitsbonus.style.fontFamily = "Arial";
+      geschwindigkeitsbonus.style.marginTop = "10px";
+      percentsIn1.appendChild(geschwindigkeitsbonus);
+
+      const checkboxGeschwindigkeitsbonus = document.createElement("span");
+      checkboxGeschwindigkeitsbonus.id = "checkboxGeschwindigkeitsbonus";
+      checkboxGeschwindigkeitsbonus.innerHTML = "AKTIV!";
+      checkboxGeschwindigkeitsbonus.style.color = "green";
+      checkboxGeschwindigkeitsbonus.style.marginLeft = "2%";
+      checkboxGeschwindigkeitsbonus.style.display = "none";
+      geschwindigkeitsbonus.appendChild(checkboxGeschwindigkeitsbonus);
+
+      const einkomensbonus = document.createElement("div");
+      einkomensbonus.innerText = "Einkomensbonus - 30%";
+      einkomensbonus.style.fontFamily = "Arial";
+      einkomensbonus.style.marginTop = "10px";
+      percentsIn1.appendChild(einkomensbonus);
+
+      const checkboxEinkomensbonus = document.createElement("span");
+      checkboxEinkomensbonus.id = "checkboxEinkomensbonus";
+      checkboxEinkomensbonus.innerHTML = "AKTIV!";
+      checkboxEinkomensbonus.style.color = "green";
+      checkboxEinkomensbonus.style.marginLeft = "5%";
+      checkboxEinkomensbonus.style.display = "none";
+      einkomensbonus.appendChild(checkboxEinkomensbonus);
+
+      const effizienzbonus = document.createElement("div");
+      effizienzbonus.innerText = "Effizienzbonus - 5%";
+      effizienzbonus.style.fontFamily = "Arial";
+      effizienzbonus.style.marginTop = "10px";
+      percentsIn1.appendChild(effizienzbonus);
+
+      const checkboxEffizienzbonus = document.createElement("span");
+      checkboxEffizienzbonus.id = "checkboxEffizienzbonus";
+      checkboxEffizienzbonus.innerHTML = "AKTIV!";
+      checkboxEffizienzbonus.style.color = "green";
+      checkboxEffizienzbonus.style.marginLeft = "5%";
+      checkboxEffizienzbonus.style.display = "none";
+      effizienzbonus.appendChild(checkboxEffizienzbonus);
