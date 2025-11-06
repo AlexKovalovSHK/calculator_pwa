@@ -1,4 +1,4 @@
-const CACHE_NAME = 'prognose-rechner-v1';
+const CACHE_NAME = 'prognose-rechner-v1.0';
 // Файлы, которые должны быть закэшированы
 const urlsToCache = [
   '/',
